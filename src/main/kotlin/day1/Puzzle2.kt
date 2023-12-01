@@ -15,18 +15,18 @@ private fun findFirstAndLastDigits(string: String): Int {
 }
 
 private fun getFirstDigit(string: String): String {
-    val firstWordDigitKey = string.findAnyOf(numbersMap.keys)?.second
+    val firstWordDigit = string.findAnyOf(numbersMap.keys)
     val firstDigit = string.firstOrNull(Character::isDigit)
     return when {
-        firstWordDigitKey != null && firstDigit != null -> {
-            if (string.indexOf(firstWordDigitKey) < string.indexOf(firstDigit)) {
-                numbersMap[firstWordDigitKey]
+        firstWordDigit?.second != null && firstDigit != null -> {
+            if (firstWordDigit.first < string.indexOf(firstDigit)) {
+                numbersMap[firstWordDigit.second]
             } else {
                 firstDigit
             }
         }
-        firstWordDigitKey != null && firstDigit == null -> {
-            numbersMap[firstWordDigitKey]
+        firstWordDigit?.second != null && firstDigit == null -> {
+            numbersMap[firstWordDigit.second]
         }
         else -> {
             firstDigit
@@ -35,18 +35,18 @@ private fun getFirstDigit(string: String): String {
 }
 
 private fun getLastDigit(string: String): String {
-    val lastWordDigitKey = string.findLastAnyOf(numbersMap.keys)?.second
+    val lastWordDigit = string.findLastAnyOf(numbersMap.keys)
     val lastDigit = string.lastOrNull(Character::isDigit)
     return when {
-        lastWordDigitKey != null && lastDigit != null -> {
-            if (string.lastIndexOf(lastWordDigitKey) > string.lastIndexOf(lastDigit)) {
-                numbersMap[lastWordDigitKey]
+        lastWordDigit?.first != null && lastDigit != null -> {
+            if (lastWordDigit.first > string.lastIndexOf(lastDigit)) {
+                numbersMap[lastWordDigit.second]
             } else {
                 lastDigit
             }
         }
-        lastWordDigitKey != null && lastDigit == null -> {
-            numbersMap[lastWordDigitKey]
+        lastWordDigit?.second != null && lastDigit == null -> {
+            numbersMap[lastWordDigit.second]
         }
         else -> {
             lastDigit
