@@ -7,18 +7,29 @@ fun main() = println(solvePuzzle())
 private fun solvePuzzle() = openFile("day3/Day3Input").readText().trim().split("\n")
     .let { list ->
         list.foldIndexed(0) { index, acc, element ->
-            "\\d+".toRegex().findAll(element).map { it.range to it.value }.filter { (range, _) ->
-                if (element.getOrNull(range.first - 1) != null && element[range.first - 1] == '*' ||
-                    element.getOrNull(range.last + 1) != null && element[range.last + 1] == '*'
-                ) return@filter true
-                val prev = list.getOrNull(index - 1)
-                val next = list.getOrNull(index + 1)
-                ((range.first - 1).coerceAtLeast(0)..range.last + 1).any {
-                    prev?.getOrNull(it) != null && prev[it] == '*' ||
-                            next?.getOrNull(it) != null && next[it] == '*'
+            "\\*".toRegex().findAll(element).sumOf { result ->
+                val rangeToCheck = (result.range.first - 1).coerceAtLeast(0)..result.range.last + 1
+                val currentLine = "\\d+".toRegex().findAll(element)
+                    .filter { it.range.first in rangeToCheck || it.range.last in rangeToCheck }
+                val prevLine = list.getOrNull(index - 1)?.let { prev ->
+                    "\\d+".toRegex().findAll(prev)
+                        .filter { it.range.first in rangeToCheck || it.range.last in rangeToCheck }
                 }
-            }.let { println(it.toList()) }
-                //.sumOf { it.second.toInt() } + acc
-            acc
+                val nextLine = list.getOrNull(index + 1)?.let { next ->
+                    "\\d+".toRegex().findAll(next)
+                        .filter { it.range.first in rangeToCheck || it.range.last in rangeToCheck }
+                }
+                mutableListOf<String>().apply {
+                    addAll(currentLine.toList().map { it.value })
+                    nextLine?.let { nextItems -> addAll(nextItems.toList().map { it.value }) }
+                    prevLine?.let { prevItems -> addAll(prevItems.toList().map { it.value }) }
+                }.let { gearNumbers ->
+                    if (gearNumbers.size > 1) {
+                        gearNumbers.fold(1) { acc, item -> acc * item.toInt() }
+                    } else {
+                        0
+                    }
+                }.toInt()
+            } + acc
         }
     }
